@@ -19,7 +19,7 @@ try:
             
             # find each number of the current line
             line_nums = re.finditer(r'(\d+)', line)
-            # create a dictionary using the number as a key and list of the start/end index as the value
+            # create a dictionary using the key:number found value:list of the start/end index
             num_dict = {int(match.group()): [match.start(), match.end() - 1] for match in line_nums}
 
             # iterate each number in the current line
