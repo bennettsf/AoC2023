@@ -47,7 +47,7 @@ try:
 
                 # return True if a symbol is found and add that number to the current part total
                 if prev_line_search or next_line_search or current_line_search:
-                    print(str(part_total) + ' ' + str(num))
+                    print(str(part_total) + ' + ' + str(num))
                     part_total += num
                     
 
