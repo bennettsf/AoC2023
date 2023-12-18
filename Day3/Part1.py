@@ -16,14 +16,13 @@ try:
         part_total = 0
 
         for line_num, line in enumerate(lines):
-            
-            # find each number of the current line
-            line_nums = re.finditer(r'(\d+)', line)
-            # create a dictionary using the key:number found value:list of the start/end index
-            num_dict = {int(match.group()): [match.start(), match.end() - 1] for match in line_nums}
 
-            # iterate each number in the current line
-            for num in num_dict:
+            # Use regex to find the starting/ending positions of each match (creates list of tuples = [(num, start, end)])
+            num_list = [(int(match.group()), match.start(), match.end()) for match in re.finditer(r'\d+', line)]               
+
+            # iterate each number in the current line (list of tuples)
+            for num in num_list:
+                
                 # if we're at the first line, set prev_line to empty_line, otherwise check the actual previous line
                 if line_num == 0:
                     prev_line = empty_line
@@ -36,19 +35,25 @@ try:
                 else:
                     next_line = lines[line_num + 1]
 
-                # index seach start/end to find symbols
-                start_search = num_dict[num][0] - 1
-                end_search = num_dict[num][1] + 2
+                # if the number starts at index 0, start at index 0
+                if num[1] == 0:
+                    start_search = 0
+                # otherwise, start -1 of the number's starting index (to find neighboring symbols)
+                else:
+                    start_search = num[1] - 1
+
+                end_search = num[2] + 1
 
                 # check prev, curr, and next lines for symbols within the start/end search threshold of a number
                 prev_line_search = bool(symbol_pattern.search(prev_line[start_search:end_search]))
                 next_line_search = bool(symbol_pattern.search(next_line[start_search:end_search]))
                 current_line_search = bool(symbol_pattern.search(line[start_search:end_search]))
 
-                # return True if a symbol is found and add that number to the current part total
+                # return True if a symbol is found on any of the lines and add that number to the current part total
                 if prev_line_search or next_line_search or current_line_search:
-                    print(str(part_total) + ' + ' + str(num))
-                    part_total += num
+                    # print(str(prev_line_search) + ' ' + str(current_line_search) + ' ' + str(next_line_search))
+                    # print(str(part_total) + ' + ' + str(num[0]))
+                    part_total += num[0]
                     
 
         print(part_total)
